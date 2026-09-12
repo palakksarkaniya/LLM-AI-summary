@@ -276,14 +276,35 @@ st.markdown("</div>", unsafe_allow_html=True)
 # -----------------------------
 # AI EXPLAIN
 # -----------------------------
-st.markdown("""
-<div class="card">
-    <div class="section-title">AI Summary</div>
-    <div class="muted">
-        Get a short explanation of what stands out in these results.
+st.markdown(
+    f"""
+<div style="
+    background-color: #f4ecff;
+    border: 1px solid #d8c6f2;
+    padding: 18px;
+    border-radius: 16px;
+    margin-top: 12px;
+">
+    <div style="
+        color: #5c2ca3;
+        font-size: 18px;
+        font-weight: 700;
+        margin-bottom: 10px;
+    ">
+        AI Summary
+    </div>
+
+    <div style="
+        color: #2b2b2b;
+        font-size: 15px;
+        line-height: 1.6;
+    ">
+        {summary}
     </div>
 </div>
-""", unsafe_allow_html=True)
+""",
+    unsafe_allow_html=True
+)
 
 if st.button("✦ Explain Results"):
 
