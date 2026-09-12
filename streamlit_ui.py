@@ -6,7 +6,7 @@ st.set_page_config(
     layout="centered"
 )
 
-API_BASE = "https://carerbridge-ai-api.onrender.com"
+API_BASE = "https://llm-ai-summary.onrender.com"
 
 # -----------------------------
 # CSS
