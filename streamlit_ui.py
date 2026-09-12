@@ -134,16 +134,18 @@ div.stButton > button {
 # -----------------------------
 # HEADER
 # -----------------------------
-st.markdown("""
-<div class="header">
-    <div class="brand">CarerBridge</div>
+st.markdown(
+    """
+    <div class="header">
+        <div class="brand">CarerBridge</div>
 
-    <div class="tabbar">
-        <div class="tab-purple">CareNavigator</div>
-        <div class="tab-green">Carer Space</div>
+        <div class="tabbar">
+            <div class="tab-purple">CareNavigator</div>
+            <div class="tab-green">Carer Space</div>
+        </div>
     </div>
-</div>
-""", unsafe_allow_html=True)
+    """,
+    unsafe_allow_html=True)
 
 # -----------------------------
 # LOAD FACILITY LIST
