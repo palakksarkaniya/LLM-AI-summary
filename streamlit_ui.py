@@ -1,177 +1,269 @@
 import streamlit as st
 import requests
 
+# =========================================================
+# PAGE CONFIG
+# =========================================================
+
 st.set_page_config(
-    page_title="CarerBridge AI Test",
+    page_title="CarerBridge AI Summary",
+    page_icon="💜",
     layout="centered"
 )
 
+# Deployed FastAPI backend
 API_BASE = "https://llm-ai-summary.onrender.com"
 
-# -----------------------------
-# CSS
-# -----------------------------
+
+# =========================================================
+# STYLING
+# =========================================================
+
 st.markdown("""
 <style>
 
+/* Main page */
 .stApp {
-    background-color: #f7f5fb;
+    background-color: #f8f6fb;
 }
 
 .block-container {
-    max-width: 430px;
+    max-width: 500px;
     padding-top: 1rem;
+    padding-bottom: 3rem;
 }
 
-.header {
-    background: white;
-    padding: 16px;
-    border-radius: 18px;
-    margin-bottom: 14px;
-    box-shadow: 0 3px 10px rgba(0,0,0,0.06);
-}
 
-.brand {
-    color: #5c2ca3;
-    font-size: 18px;
-    font-weight: 700;
-}
-
-.tabbar {
-    display: flex;
-    margin-top: 10px;
-    border-radius: 10px;
-    overflow: hidden;
-}
-
-.tab-purple {
-    width: 50%;
-    background: #6427a6;
-    color: white;
-    text-align: center;
-    padding: 9px;
-    font-size: 13px;
-    font-weight: 600;
-}
-
-.tab-green {
-    width: 50%;
-    background: #0f6a4d;
-    color: white;
-    text-align: center;
-    padding: 9px;
-    font-size: 13px;
-    font-weight: 600;
-}
-
-.card {
-    background: white;
+/* CarerBridge header */
+.cb-header {
+    background-color: white;
     padding: 18px;
     border-radius: 18px;
-    margin-bottom: 14px;
-    box-shadow: 0 3px 10px rgba(0,0,0,0.06);
+    margin-bottom: 16px;
+    box-shadow: 0px 3px 12px rgba(0,0,0,0.06);
 }
 
-.facility-name {
+.cb-brand {
+    color: #5c2ca3;
     font-size: 20px;
     font-weight: 700;
-    color: #222;
+    margin-bottom: 12px;
 }
 
-.muted {
-    color: #777;
+
+/* Purple + green navigation */
+.cb-tabs {
+    display: flex;
+    width: 100%;
+    overflow: hidden;
+    border-radius: 9px;
+}
+
+.cb-tab-purple {
+    width: 50%;
+    background-color: #6427a6;
+    color: white;
+    padding: 10px;
+    text-align: center;
     font-size: 13px;
+    font-weight: 600;
 }
 
-.section-title {
-    font-size: 15px;
+.cb-tab-green {
+    width: 50%;
+    background-color: #12664f;
+    color: white;
+    padding: 10px;
+    text-align: center;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+
+/* Cards */
+.cb-card {
+    background-color: white;
+    padding: 20px;
+    border-radius: 18px;
+    margin-top: 14px;
+    margin-bottom: 14px;
+    box-shadow: 0px 3px 12px rgba(0,0,0,0.06);
+}
+
+.cb-facility-name {
+    color: #222222;
+    font-size: 21px;
     font-weight: 700;
-    color: #333;
-    margin-bottom: 10px;
+    margin-bottom: 5px;
 }
 
-.metric-row {
+.cb-muted {
+    color: #707070;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.cb-section-title {
+    color: #303030;
+    font-size: 17px;
+    font-weight: 700;
+    margin-bottom: 14px;
+}
+
+
+/* Metrics */
+.cb-metric-row {
     display: flex;
     justify-content: space-between;
-    margin-bottom: 8px;
+    align-items: center;
+    margin-bottom: 11px;
+    gap: 20px;
+}
+
+.cb-metric-label {
+    color: #555555;
     font-size: 14px;
 }
 
-.metric-label {
-    color: #555;
-}
-
-.metric-value {
+.cb-metric-value {
+    color: #292929;
+    font-size: 14px;
     font-weight: 600;
 }
 
-.ai-card {
-    background: #f4ecff;
-    border: 1px solid #e0d2f6;
-    padding: 16px;
-    border-radius: 16px;
-    margin-top: 12px;
-}
 
-.ai-title {
-    color: #5c2ca3;
-    font-weight: 700;
-    margin-bottom: 8px;
-}
-
+/* Explain button */
 div.stButton > button {
     width: 100%;
-    border-radius: 12px;
     background-color: #6427a6;
     color: white;
     border: none;
+    border-radius: 12px;
+    padding: 0.75rem 1rem;
     font-weight: 600;
+    font-size: 15px;
+}
+
+div.stButton > button:hover {
+    background-color: #54208e;
+    color: white;
+    border: none;
+}
+
+div.stButton > button:focus {
+    color: white;
+    border: none;
+}
+
+
+/* AI summary */
+.ai-card {
+    background-color: #f3ebff;
+    border: 1px solid #d8c6f2;
+    padding: 20px;
+    border-radius: 18px;
+    margin-top: 16px;
+}
+
+.ai-title {
+    color: #5c2ca3 !important;
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 12px;
+}
+
+.ai-text {
+    color: #292929 !important;
+    font-size: 15px;
+    line-height: 1.65;
+}
+
+
+/* Selectbox */
+div[data-baseweb="select"] > div {
+    border-radius: 10px;
 }
 
 </style>
 """, unsafe_allow_html=True)
 
-# -----------------------------
-# HEADER
-# -----------------------------
-st.markdown(
-    """
-<div class="header">
-<div class="brand">CarerBridge</div>
 
-<div class="tabbar">
-<div class="tab-purple">CareNavigator</div>
-<div class="tab-green">Carer Space</div>
+# =========================================================
+# HEADER
+# =========================================================
+
+st.markdown(
+"""
+<div class="cb-header">
+<div class="cb-brand">CarerBridge</div>
+
+<div class="cb-tabs">
+<div class="cb-tab-purple">CareNavigator</div>
+<div class="cb-tab-green">Carer Space</div>
 </div>
 </div>
 """,
-    unsafe_allow_html=True
+unsafe_allow_html=True
 )
-# -----------------------------
+
+
+# =========================================================
 # LOAD FACILITY LIST
-# -----------------------------
+# =========================================================
+
 try:
+
     response = requests.get(
         f"{API_BASE}/api/facilities",
-        timeout=30
+        timeout=60
     )
 
     response.raise_for_status()
+
     facilities = response.json()
 
 except Exception as e:
-    st.error(f"Could not load facilities: {e}")
+
+    st.error(
+        f"Could not load facilities. Please try again. Error: {e}"
+    )
+
     st.stop()
 
-# -----------------------------
-# SELECT FACILITY
-# -----------------------------
+
+# =========================================================
+# FACILITY SEARCH / SELECT
+# =========================================================
+
 st.markdown("### Find a care service")
 
-facility_options = {
-    f'{f["facility_name"]} — {f["suburb"]}, {f["state"]}': f["facility_id"]
-    for f in facilities
-}
+facility_options = {}
+
+for facility in facilities:
+
+    name = facility.get(
+        "facility_name",
+        "Unknown facility"
+    )
+
+    suburb = facility.get(
+        "suburb",
+        ""
+    )
+
+    state = facility.get(
+        "state",
+        ""
+    )
+
+    facility_id = facility.get(
+        "facility_id"
+    )
+
+    label = f"{name} — {suburb}, {state}"
+
+    facility_options[label] = facility_id
+
 
 selected_label = st.selectbox(
     "Search or select a facility",
@@ -180,137 +272,299 @@ selected_label = st.selectbox(
 
 selected_id = facility_options[selected_label]
 
-# -----------------------------
-# LOAD SELECTED FACILITY
-# -----------------------------
+
+# =========================================================
+# LOAD SELECTED FACILITY DETAILS
+# =========================================================
+
 try:
+
     response = requests.get(
         f"{API_BASE}/api/facilities/{selected_id}/details",
-        timeout=30
+        timeout=60
     )
 
     response.raise_for_status()
+
     facility = response.json()
 
 except Exception as e:
-    st.error(f"Could not load facility: {e}")
+
+    st.error(
+        f"Could not load facility details. Error: {e}"
+    )
+
     st.stop()
 
-facility_name = facility.get("facility_name", "")
-suburb = facility.get("address", {}).get("suburb", "")
-state = facility.get("address", {}).get("state", "")
-care_type = facility.get("care_type", "")
 
-st.markdown(f"""
-<div class="card">
-    <div class="facility-name">{facility_name}</div>
-    <div class="muted">{care_type}</div>
-    <div class="muted">{suburb}, {state}</div>
-</div>
-""", unsafe_allow_html=True)
+# =========================================================
+# FACILITY INFORMATION
+# =========================================================
 
-# -----------------------------
-# CARE QUALITY
-# -----------------------------
-care_quality = facility.get("care_quality", {})
+facility_name = facility.get(
+    "facility_name",
+    "Facility"
+)
 
-st.markdown("""
-<div class="card">
-<div class="section-title">Care Quality</div>
-""", unsafe_allow_html=True)
+provider_name = facility.get(
+    "provider_name",
+    ""
+)
 
-rows = [
-    ("Overall", care_quality.get("overall_rating")),
-    ("Resident Experience", care_quality.get("resident_experience_rating")),
-    ("Staffing", care_quality.get("staffing_rating")),
-    ("Compliance", care_quality.get("compliance_rating")),
-    ("Quality Measures", care_quality.get("quality_measures_rating")),
-]
+care_type = facility.get(
+    "care_type",
+    ""
+)
 
-for label, value in rows:
-    st.markdown(
-        f"""
-        <div class="metric-row">
-            <span class="metric-label">{label}</span>
-            <span class="metric-value">
-                {value if value is not None else "N/A"}
-            </span>
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
+address = facility.get(
+    "address",
+    {}
+)
 
-st.markdown("</div>", unsafe_allow_html=True)
+suburb = address.get(
+    "suburb",
+    ""
+)
 
-# -----------------------------
-# VISIT PRACTICALITY
-# -----------------------------
-visit = facility.get("visit_practicality", {})
+state = address.get(
+    "state",
+    ""
+)
 
-st.markdown("""
-<div class="card">
-<div class="section-title">Visit Practicality</div>
-""", unsafe_allow_html=True)
 
-visit_rows = [
-    ("Public Transport", visit.get("public_transport_score")),
-    ("Parking", visit.get("parking_score")),
-    ("Accessible Toilets", visit.get("accessible_toilet_score")),
-]
-
-for label, value in visit_rows:
-    st.markdown(
-        f"""
-        <div class="metric-row">
-            <span class="metric-label">{label}</span>
-            <span class="metric-value">
-                {value if value is not None else "N/A"}
-            </span>
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
-
-st.markdown("</div>", unsafe_allow_html=True)
-
-# -----------------------------
-# AI EXPLAIN
-# -----------------------------
 st.markdown(
-    f"""
-<div style="
-    background-color: #f4ecff;
-    border: 1px solid #d8c6f2;
-    padding: 18px;
-    border-radius: 16px;
-    margin-top: 12px;
-">
-    <div style="
-        color: #5c2ca3;
-        font-size: 18px;
-        font-weight: 700;
-        margin-bottom: 10px;
-    ">
-        AI Summary
-    </div>
+f"""
+<div class="cb-card">
 
-    <div style="
-        color: #2b2b2b;
-        font-size: 15px;
-        line-height: 1.6;
-    ">
-        {summary}
-    </div>
+<div class="cb-facility-name">
+{facility_name}
+</div>
+
+<div class="cb-muted">
+{provider_name}
+</div>
+
+<div class="cb-muted">
+{care_type}
+</div>
+
+<div class="cb-muted">
+{suburb}, {state}
+</div>
+
+</div>
+""",
+unsafe_allow_html=True
+)
+
+
+# =========================================================
+# CARE QUALITY
+# =========================================================
+
+care_quality = facility.get(
+    "care_quality",
+    {}
+)
+
+st.markdown(
+"""
+<div class="cb-card">
+<div class="cb-section-title">
+Care Quality
+</div>
+""",
+unsafe_allow_html=True
+)
+
+
+quality_rows = [
+
+    (
+        "Overall",
+        care_quality.get("overall_rating")
+    ),
+
+    (
+        "Resident Experience",
+        care_quality.get(
+            "resident_experience_rating"
+        )
+    ),
+
+    (
+        "Staffing",
+        care_quality.get(
+            "staffing_rating"
+        )
+    ),
+
+    (
+        "Compliance",
+        care_quality.get(
+            "compliance_rating"
+        )
+    ),
+
+    (
+        "Quality Measures",
+        care_quality.get(
+            "quality_measures_rating"
+        )
+    )
+
+]
+
+
+for label, value in quality_rows:
+
+    display_value = (
+        value
+        if value is not None
+        else "N/A"
+    )
+
+    st.markdown(
+    f"""
+<div class="cb-metric-row">
+<span class="cb-metric-label">
+{label}
+</span>
+
+<span class="cb-metric-value">
+{display_value}
+</span>
 </div>
 """,
     unsafe_allow_html=True
+    )
+
+
+st.markdown(
+"</div>",
+unsafe_allow_html=True
 )
 
-if st.button("✦ Explain Results"):
 
-    with st.spinner("Generating summary..."):
+# =========================================================
+# VISIT PRACTICALITY
+# =========================================================
+
+visit = facility.get(
+    "visit_practicality",
+    {}
+)
+
+st.markdown(
+"""
+<div class="cb-card">
+<div class="cb-section-title">
+Visit Practicality
+</div>
+""",
+unsafe_allow_html=True
+)
+
+
+visit_rows = [
+
+    (
+        "Public Transport",
+        visit.get(
+            "public_transport_score"
+        )
+    ),
+
+    (
+        "Parking",
+        visit.get(
+            "parking_score"
+        )
+    ),
+
+    (
+        "Accessible Toilets",
+        visit.get(
+            "accessible_toilet_score"
+        )
+    )
+
+]
+
+
+for label, value in visit_rows:
+
+    if isinstance(value, float):
+        display_value = round(value, 1)
+
+    elif value is None:
+        display_value = "N/A"
+
+    else:
+        display_value = value
+
+
+    st.markdown(
+    f"""
+<div class="cb-metric-row">
+
+<span class="cb-metric-label">
+{label}
+</span>
+
+<span class="cb-metric-value">
+{display_value}
+</span>
+
+</div>
+""",
+    unsafe_allow_html=True
+    )
+
+
+st.markdown(
+"</div>",
+unsafe_allow_html=True
+)
+
+
+# =========================================================
+# AI EXPLANATION SECTION
+# =========================================================
+
+st.markdown(
+"""
+<div class="cb-card">
+
+<div class="cb-section-title">
+AI Summary
+</div>
+
+<div class="cb-muted">
+Get a short explanation of what stands out in these results.
+</div>
+
+</div>
+""",
+unsafe_allow_html=True
+)
+
+
+# =========================================================
+# EXPLAIN RESULTS BUTTON
+# =========================================================
+
+if st.button(
+    "✦ Explain Results",
+    use_container_width=True
+):
+
+    with st.spinner(
+        "Explaining these results..."
+    ):
 
         try:
+
             ai_response = requests.get(
                 f"{API_BASE}/api/ai/explain/{selected_id}",
                 timeout=120
@@ -322,18 +576,38 @@ if st.button("✦ Explain Results"):
 
             summary = ai_data.get(
                 "summary",
-                "No summary was returned."
+                "No AI summary was returned."
             )
 
+
+            # AI SUMMARY CARD
             st.markdown(
-                f"""
-                <div class="ai-card">
-                    <div class="ai-title">AI Summary</div>
-                    {summary}
-                </div>
-                """,
-                unsafe_allow_html=True
+            f"""
+<div class="ai-card">
+
+<div class="ai-title">
+AI Summary
+</div>
+
+<div class="ai-text">
+{summary}
+</div>
+
+</div>
+""",
+            unsafe_allow_html=True
             )
+
+
+        except requests.exceptions.Timeout:
+
+            st.error(
+                "The AI took too long to respond. Please try again."
+            )
+
 
         except Exception as e:
-            st.error(f"AI summary failed: {e}")
+
+            st.error(
+                f"AI summary could not be generated. Error: {e}"
+            )
